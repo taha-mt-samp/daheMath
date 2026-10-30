@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمایشگاه پیشرفته اشکال هندسی | Geometric Shapes Lab v2</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- فونت وزیرمتن برای متون فارسی و JetBrains Mono برای فرمول‌ها -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        neon: {
+                            cyan: '#00f3ff',
+                            pink: '#ff007f',
+                            purple: '#b026ff',
+                            green: '#00ff66',
+                            amber: '#ffbe0b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #07090e;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        /* پس‌زمینه شطرنجی آزمایشگاهی */
+        .bg-grid {
+            background-size: 35px 35px;
+            background-image: 
+                linear-gradient(to right, rgba(0, 243, 255, 0.035) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 243, 255, 0.035) 1px, transparent 1px);
+        }
+
+        /* استایل سفارشی اسلایدرها */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #1e293b;
+            border-radius: 8px;
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #00f3ff;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00f3ff;
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+            background: #ffffff;
+            box-shadow: 0 0 18px #00f3ff;
+        }
+
+        /* پنل شیشه‌ای */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .neon-border-hover:hover {
+            border-color: rgba(0, 243, 255, 0.35);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+        }
+
+        /* متغیرهای فرمول ریاضی */
+        .math-var {
+            display: inline-block;
+            padding: 0 5px;
+            border-radius: 4px;
+            cursor: help;
+            transition: all 0.2s ease;
+        }
+        .math-var:hover {
+            background: rgba(0, 243, 255, 0.2);
+            color: #00f3ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 243, 255, 0.2);
+        }
+
+        /* دکمه‌های تب موتور ریاضی */
+        .mode-tab.active {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(176, 38, 255, 0.2));
+            border-color: #00f3ff;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+
+        /* اسکرول‌بار سفارشی */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f3ff;
+        }
+    </style>
+</head>
+<body class="bg-grid min-h-screen flex flex-col justify-between selection:bg-neon-cyan selection:text-black">
+
+    <!-- هدر بالایی -->
+    <header class="glass-panel sticky top-0 z-30 border-b border-slate-800 px-4 md:px-6 py-3 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-neon-cyan to-neon-purple flex items-center justify-center shadow-[0_0_15px_rgba(0,243,255,0.4)]">
+                <svg class="w-6 h-6 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-lg md:text-xl font-bold bg-gradient-to-r from-white via-neon-cyan to-neon-purple bg-clip-text text-transparent">
+                    آزمایشگاه پیشرفته اشکال هندسی
+                </h1>
+                <p class="text-[11px] text-slate-400">شبیه‌ساز چندحالته منحنی‌های پارامتریک، لیساژو، اسپیروگراف و سوپرفرمول</p>
+            </div>
+        </div>
+
+        <!-- انتخابگر موتور هندسی (۵ شکل کاملاً متفاوت) -->
+        <div class="flex items-center gap-1.5 bg-slate-950/80 p-1.5 rounded-xl border border-slate-800 overflow-x-auto max-w-full">
+            <button onclick="setEngineMode('polygon')" id="tab_polygon" class="mode-tab active px-3 py-1.5 text-xs font-medium rounded-lg border border-transparent text-slate-300 hover:text-white transition-all whitespace-nowrap">
+                🔷 تودرتوی چرخان
+            </button>
+            <button onclick="setEngineMode('lissajous')" id="tab_lissajous" class="mode-tab px-3 py-1.5 text-xs font-medium rounded-lg border border-transparent text-slate-300 hover:text-white transition-all whitespace-nowrap">
+                〰️ شبکه لیساژو
+            </button>
+            <button onclick="setEngineMode('hypotrochoid')" id="tab_hypotrochoid" class="mode-tab px-3 py-1.5 text-xs font-medium rounded-lg border border-transparent text-slate-300 hover:text-white transition-all whitespace-nowrap">
+                ⚙️ اسپیروگراف چرخ‌دنده‌ای
+            </button>
+            <button onclick="setEngineMode('rose')" id="tab_rose" class="mode-tab px-3 py-1.5 text-xs font-medium rounded-lg border border-transparent text-slate-300 hover:text-white transition-all whitespace-nowrap">
+                🌸 گل قطبی (Rose)
+            </button>
+            <button onclick="setEngineMode('superformula')" id="tab_superformula" class="mode-tab px-3 py-1.5 text-xs font-medium rounded-lg border border-transparent text-slate-300 hover:text-white transition-all whitespace-nowrap">
+                🧬 سوپرفرمول ژیلیس
+            </button>
+        </div>
+
+        <!-- وضعیت عملکرد و ابزارهای سریع -->
+        <div class="flex items-center gap-2">
+            <!-- نشانگر ضبط ویدیو -->
+            <div id="recIndicator" class="hidden px-3 py-1 rounded-full bg-red-950/90 border border-red-500/50 items-center gap-2 text-xs font-mono text-red-400">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+                <span id="recTimer">REC 5.0s</span>
+            </div>
+
+            <div class="px-3 py-1 rounded-full bg-slate-900 border border-slate-800 flex items-center gap-1.5 text-xs font-mono" title="نرخ فریم بر ثانیه">
+                <span class="w-2 h-2 rounded-full bg-neon-green"></span>
+                <span id="fpsCounter" class="text-neon-green font-bold">60</span>
+                <span class="text-slate-500">FPS</span>
+            </div>
+
+            <button onclick="toggleAudio()" id="audioBtn" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all" title="واکنش به صدا (میکروفون)">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                </svg>
+            </button>
+
+            <button onclick="togglePause()" id="pauseBtn" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all" title="توقف / ادامه (Space)">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </button>
+
+            <button onclick="toggleFullscreen()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all" title="تمام‌صفحه کردن بوم">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- بخش اصلی (پنل کنترل + بوم نمایش) -->
+    <main class="flex-1 flex flex-col lg:flex-row gap-5 p-4 md:px-6 max-w-[1700px] w-full mx-auto overflow-hidden">
+        
+        <!-- پنل سمت راست: کنترل متغیرها و پریست‌ها -->
+        <aside class="w-full lg:w-[400px] glass-panel rounded-2xl p-4 flex flex-col justify-between gap-4 border border-slate-800/80 lg:max-h-[calc(100vh-105px)] overflow-y-auto shrink-0">
+            
+            <div class="space-y-4">
+                <!-- بخش پریست‌های آماده و شخصی -->
+                <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-neon-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                            پریست‌ها و ذخیره‌سازی
+                        </span>
+                        <button onclick="randomizeParams()" class="text-[11px] text-neon-cyan hover:underline flex items-center gap-1">
+                            🎲 تصادفی‌ساز
+                        </button>
+                    </div>
+
+                    <!-- دکمه‌های پریست پیش‌فرض -->
+                    <div class="grid grid-cols-4 gap-1.5">
+                        <button onclick="applyBuiltInPreset('star')" class="px-2 py-1.5 text-[11px] font-medium rounded-lg bg-slate-800/90 hover:bg-neon-cyan/20 hover:text-neon-cyan border border-slate-700 transition-all truncate">ستاره کپلر</button>
+                        <button onclick="applyBuiltInPreset('lissajous_net')" class="px-2 py-1.5 text-[11px] font-medium rounded-lg bg-slate-800/90 hover:bg-neon-pink/20 hover:text-neon-pink border border-slate-700 transition-all truncate">موج لیساژو</button>
+                        <button onclick="applyBuiltInPreset('gear_flower')" class="px-2 py-1.5 text-[11px] font-medium rounded-lg bg-slate-800/90 hover:bg-neon-purple/20 hover:text-neon-purple border border-slate-700 transition-all truncate">چرخ‌دنده</button>
+                        <button onclick="applyBuiltInPreset('bio_cell')" class="px-2 py-1.5 text-[11px] font-medium rounded-lg bg-slate-800/90 hover:bg-neon-green/20 hover:text-neon-green border border-slate-700 transition-all truncate">سوپرفرمول</button>
+                    </div>
+
+                    <!-- ذخیره پریست شخصی -->
+                    <div class="flex gap-1.5 pt-1">
+                        <input type="text" id="customPresetName" placeholder="نام تنظیمات دلخواه شما..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-neon-cyan">
+                        <button onclick="saveUserPreset()" class="px-3 py-1.5 rounded-lg bg-neon-purple/20 hover:bg-neon-purple/40 text-neon-purple border border-neon-purple/50 text-xs font-semibold transition-all whitespace-nowrap">
+                            + ذخیره پریست
+                        </button>
+                    </div>
+
+                    <!-- لیست پریست‌های ذخیره‌شده کاربر -->
+                    <div id="userPresetsContainer" class="flex flex-wrap gap-1.5 pt-1 empty:hidden"></div>
+                </div>
+
+                <!-- هدر اسلایدرها -->
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                    <h2 class="text-sm font-semibold text-white flex items-center gap-2">
+                        <svg class="w-4 h-4 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                        </svg>
+                        پارامترهای هندسی و ریاضی
+                    </h2>
+                    <span id="currentModeBadge" class="text-[11px] px-2 py-0.5 rounded bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20">تودرتوی چرخان</span>
+                </div>
+
+                <!-- گرید اسلایدرها (۱۰ پارامتر تغییرپذیر) -->
+                <div class="space-y-3">
+                    <!-- ۱. تعداد اضلاع / تقارن پایه -->
+                    <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 neon-border-hover transition-all">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label for="sidesInput" id="lbl_sides" class="text-xs text-slate-300 font-medium">تعداد اضلاع / تقارن پایه (N)</label>
+                            <span id="sidesVal" class="px-2 py-0.5 text-[11px] font-mono rounded bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/30">6</span>
+                        </div>
+                        <input type="range" id="sidesInput" min="2" max="30" step="1" value="6">
+                    </div>
+
+                    <!-- ۲. زاویه چرخش / اختلاف فاز -->
+                    <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 neon-border-hover transition-all">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label for="angleInput" id="lbl_angle" class="text-xs text-slate-300 font-medium">زاویه انحراف گام (Δθ)</label>
+                            <span id="angleVal" class="px-2 py-0.5 text-[11px] font-mono rounded bg-neon-pink/10 text-neon-pink border border-neon-pink/30">2.5°</span>
+                        </div>
+                        <input type="range" id="angleInput" min="0.1" max="60" step="0.1" value="2.5">
+                    </div>
+
+                    <!-- ۳. تراکم الگو -->
+                    <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 neon-border-hover transition-all">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label for="densityInput" id="lbl_density" class="text-xs text-slate-300 font-medium">تراکم الگو (تعداد لایه‌ها)</label>
+                            <span id="densityVal" class="px-2 py-0.5 text-[11px] font-mono rounded bg-neon-purple/10 text-neon-purple border border-neon-purple/30">85</span>
+                        </div>
+                        <input type="range" id="densityInput" min="5" max="220" step="1" value="85">
+                    </div>
+
+                    <!-- ۴ و ۵: فرکانس X و Y (مخصوص لیساژو، چرخ‌دنده و سوپرفرمول) -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 neon-border-hover transition-all">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label for="freqXInput" id="lbl_freqX" class="text-[11px] text-slate-300 font-medium">فرکانس افقی (fx)</label>
+                                <span id="freqXVal" class="px-1.5 py-0.5 text-[10px] font-mono rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">3</span>
+                            </div>
+                            <input type="range" id="freqXInput" min="1" max="20" step="1" value="3">
+                        </div>
+
+                        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 neon-border-hover transition-all">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label for="freqYInput" id="lbl_freqY" class="text-[11px] text-slate-300 font-medium">فرکانس عمودی (fy)</label>
+                                <span id="freqYVal" class="px-1.5 py-0.5 text-[10px] font-mono rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">4</span>
+                            </div>
+                            <input type="range" id="freqYInput" min="1" max="20" step="1" value="4">
+                        </div>
+                    </div>
+
+                    <!-- ۶ و ۷: ضریب مقیاس و دامنه اعوجاج موجی -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 neon-border-hover transition-all">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label for="scaleInput" class="text-[11px] text-slate-300 font-medium">ضریب مقیاس (S)</label>
+                                <span id="scaleVal" class="px-1.5 py-0.5 text-[10px] font-mono rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">0.972</span>
+                            </div>
+                            <input type="range" id="scaleInput" min="0.88" max="0.995" step="0.001" value="0.972">
+                        </div>
+
+                        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 neon-border-hover transition-all">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label for="waveAmpInput" class="text-[11px] text-slate-300 font-medium">دامنه موج (W)</label>
+                                <span id="waveAmpVal" class="px-1.5 py-0.5 text-[10px] font-mono rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">0.12</span>
+                            </div>
+                            <input type="range" id="waveAmpInput" min="0" max="0.8" step="0.02" value="0.12">
+                        </div>
+                    </div>
+
+                    <!-- ۸ و ۹: سرعت انیمیشن و ضخامت خطوط -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 neon-border-hover transition-all">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label for="speedInput" class="text-[11px] text-slate-300 font-medium">سرعت چرخش (ω)</label>
+                                <span id="speedVal" class="px-1.5 py-0.5 text-[10px] font-mono rounded bg-neon-green/10 text-neon-green border border-neon-green/30">1.5x</span>
+                            </div>
+                            <input type="range" id="speedInput" min="0" max="5" step="0.1" value="1.5">
+                        </div>
+
+                        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 neon-border-hover transition-all">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label for="lineWidthInput" class="text-[11px] text-slate-300 font-medium">ضخامت خط (px)</label>
+                                <span id="lineWidthVal" class="px-1.5 py-0.5 text-[10px] font-mono rounded bg-blue-500/10 text-blue-400 border border-blue-500/30">1.6</span>
+                            </div>
+                            <input type="range" id="lineWidthInput" min="0.3" max="6" step="0.1" value="1.6">
+                        </div>
+                    </div>
+
+                    <!-- ۱۰. دنباله حرکت (Motion Blur Trail) -->
+                    <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 neon-border-hover transition-all">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label for="trailInput" class="text-xs text-slate-300 font-medium">ماندگاری رد تصویر (Motion Trail)</label>
+                            <span id="trailVal" class="px-2 py-0.5 text-[11px] font-mono rounded bg-slate-800 text-slate-300">0% (بدون رد)</span>
+                        </div>
+                        <input type="range" id="trailInput" min="0" max="0.92" step="0.04" value="0">
+                    </div>
+
+                    <!-- رنگ و افکت‌های بصری (Glow به صورت پیش‌فرض خاموش برای FPS بالا) -->
+                    <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 space-y-2.5">
+                        <div class="flex justify-between items-center">
+                            <label for="colorPicker" class="text-xs text-slate-300 font-medium">رنگ اصلی خطوط</label>
+                            <div class="flex items-center gap-2">
+                                <span id="colorHex" class="text-[11px] font-mono text-slate-400 uppercase">#00F3FF</span>
+                                <input type="color" id="colorPicker" value="#00f3ff" class="w-7 h-7 rounded cursor-pointer bg-transparent border-0">
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-800/80 grid grid-cols-2 gap-2">
+                            <label class="flex items-center justify-between p-1.5 rounded-lg bg-slate-950/50 border border-slate-800 cursor-pointer">
+                                <span class="text-[11px] text-slate-300">طیف رنگین‌کمان</span>
+                                <input type="checkbox" id="rainbowToggle" class="accent-neon-pink w-4 h-4 cursor-pointer">
+                            </label>
+
+                            <label class="flex items-center justify-between p-1.5 rounded-lg bg-slate-950/50 border border-slate-800 cursor-pointer" title="خاموش بودن باعث حفظ 60 FPS پایدار می‌شود">
+                                <span class="text-[11px] text-slate-300">درخشش نئون</span>
+                                <input type="checkbox" id="glowToggle" class="accent-neon-cyan w-4 h-4 cursor-pointer">
+                            </label>
+
+                            <label class="flex items-center justify-between p-1.5 rounded-lg bg-slate-950/50 border border-slate-800 cursor-pointer">
+                                <span class="text-[11px] text-slate-300">خطوط نقطه‌چین</span>
+                                <input type="checkbox" id="dashedToggle" class="accent-neon-purple w-4 h-4 cursor-pointer">
+                            </label>
+
+                            <label class="flex items-center justify-between p-1.5 rounded-lg bg-slate-950/50 border border-slate-800 cursor-pointer">
+                                <span class="text-[11px] text-slate-300">نمایش رئوس</span>
+                                <input type="checkbox" id="nodesToggle" class="accent-neon-green w-4 h-4 cursor-pointer">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- دکمه‌های خروجی (عکس PNG + ویدیو ۵ ثانیه‌ای WebM) -->
+            <div class="space-y-2 pt-3 border-t border-slate-800">
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="downloadCanvasImage()" class="py-2.5 px-3 rounded-xl font-bold text-xs bg-gradient-to-r from-neon-cyan to-blue-500 text-slate-950 hover:shadow-[0_0_20px_rgba(0,243,255,0.4)] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                        </svg>
+                        دانلود عکس (PNG)
+                    </button>
+
+                    <button id="recordVideoBtn" onclick="recordFiveSecondVideo()" class="py-2.5 px-3 rounded-xl font-bold text-xs bg-gradient-to-r from-neon-pink to-neon-purple text-white hover:shadow-[0_0_20px_rgba(255,0,127,0.4)] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                        <span id="recordBtnText">ضبط ۵ ثانیه چرخش</span>
+                    </button>
+                </div>
+
+                <button onclick="resetDefaults()" class="w-full py-1.5 px-4 rounded-xl text-[11px] font-medium bg-slate-800/80 text-slate-400 hover:bg-slate-700 hover:text-white transition-all">
+                    بازنشانی تمام تنظیمات به حالت استاندارد
+                </button>
+            </div>
+        </aside>
+
+        <!-- بخش مرکزی: بوم نمایش زنده و نوار فرمول تعاملی -->
+        <section class="flex-1 flex flex-col gap-4 min-h-[520px] lg:max-h-[calc(100vh-105px)]">
+            
+            <!-- نوار فرمول ریاضی زنده با قابلیت Hover -->
+            <div class="glass-panel rounded-2xl p-3.5 border border-slate-800/80 flex flex-col xl:flex-row items-center justify-between gap-3">
+                <div class="flex items-center gap-2 text-xs text-slate-400 shrink-0">
+                    <span class="px-2 py-1 rounded bg-neon-purple/20 text-neon-purple font-semibold">معادله زنده</span>
+                    <span>ماوس را روی اعداد ببرید:</span>
+                </div>
+
+                <!-- فرمول تعاملی پویا -->
+                <div dir="ltr" id="liveFormulaBox" class="font-mono text-xs md:text-sm bg-slate-950/90 px-4 py-2 rounded-xl border border-slate-800 text-slate-200 tracking-wider text-center select-all">
+                    P(k, θ) = R · 
+                    <span class="math-var text-amber-400 font-bold" id="f_scale" data-tip="ضریب مقیاس (Scale): نرخ کوچک شدن شعاع هر لایه نسبت به لایه قبلی">0.972</span><sup class="math-var text-neon-purple font-bold" id="f_density" data-tip="تراکم الگو (Density): تعداد کل لایه‌ها و گام‌های تکرار شونده">85</sup>
+                    · [1 + <span class="math-var text-amber-300 font-bold" id="f_wave" data-tip="دامنه موج (Wave Amp): میزان انحراف هارمونیک لبه‌های شکل">0.12</span>·cos(<span class="math-var text-emerald-400 font-bold" id="f_fx" data-tip="فرکانس افقی (fx): ضریب تناوب موج در راستای اول">3</span>θ)]
+                    · exp(i · [
+                    <span class="math-var text-neon-cyan font-bold" id="f_sides" data-tip="تقارن پایه (N): تقسیم دایره به بخش‌های متقارن">2π/6</span>
+                    + k·<span class="math-var text-neon-pink font-bold" id="f_angle" data-tip="زاویه چرخش (Δθ): گام چرخش زاویه‌ای بین لایه‌ها">2.5°</span>
+                    + <span class="math-var text-neon-green font-bold" id="f_speed" data-tip="سرعت زاویه‌ای (ω): سرعت انیمیشن در طول زمان">1.5</span>t ])
+                </div>
+
+                <!-- نمایشگر توضیح هاور -->
+                <div id="mathTooltip" class="text-xs text-neon-cyan min-h-[20px] xl:max-w-[270px] text-center xl:text-left font-medium transition-opacity duration-200">
+                    💡 نشانگر ماوس را روی اعداد رنگی معادله ببرید.
+                </div>
+            </div>
+
+            <!-- ظرف اصلی Canvas -->
+            <div id="canvasContainer" class="flex-1 glass-panel rounded-2xl border border-slate-800/80 relative overflow-hidden flex items-center justify-center group">
+                
+                <!-- بوم نقاشی -->
+                <canvas id="geoCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
+
+                <!-- اطلاعات گوشه بوم (HUD) -->
+                <div dir="ltr" class="absolute top-4 left-4 pointer-events-none space-y-1 font-mono text-[11px] text-slate-400 bg-slate-950/70 backdrop-blur-md p-3 rounded-xl border border-slate-800/70">
+                    <div>ENGINE: <span id="hudEngine" class="text-neon-cyan font-bold">POLYGON</span></div>
+                    <div>NODES: <span id="hudVertices" class="text-neon-pink font-bold">510</span></div>
+                    <div>PHASE (θ): <span id="hudPhase" class="text-neon-purple font-bold">0.00</span> rad</div>
+                    <div>ZOOM: <span id="hudZoom" class="text-neon-green font-bold">100%</span></div>
+                    <div id="hudAudioBox" class="hidden">AUDIO AMP: <span id="hudAudio" class="text-amber-400 font-bold">0%</span></div>
+                </div>
+
+                <!-- راهنمای تعامل با بوم -->
+                <div class="absolute bottom-4 right-4 pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity text-[11px] bg-slate-950/75 px-3 py-1.5 rounded-lg border border-slate-800 text-slate-300">
+                    اسکرول: بزرگنمایی | کشیدن ماوس (Drag): جابجایی | دابل‌کلیک: مرکز
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // --- دسترسی به المان‌های DOM ---
+        const canvas = document.getElementById('geoCanvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        const container = document.getElementById('canvasContainer');
+
+        const inputs = {
+            sides: document.getElementById('sidesInput'),
+            angle: document.getElementById('angleInput'),
+            density: document.getElementById('densityInput'),
+            freqX: document.getElementById('freqXInput'),
+            freqY: document.getElementById('freqYInput'),
+            scale: document.getElementById('scaleInput'),
+            waveAmp: document.getElementById('waveAmpInput'),
+            speed: document.getElementById('speedInput'),
+            lineWidth: document.getElementById('lineWidthInput'),
+            trail: document.getElementById('trailInput'),
+            color: document.getElementById('colorPicker'),
+            rainbow: document.getElementById('rainbowToggle'),
+            glow: document.getElementById('glowToggle'),
+            dashed: document.getElementById('dashedToggle'),
+            nodes: document.getElementById('nodesToggle')
+        };
+
+        const labels = {
+            sides: document.getElementById('sidesVal'),
+            angle: document.getElementById('angleVal'),
+            density: document.getElementById('densityVal'),
+            freqX: document.getElementById('freqXVal'),
+            freqY: document.getElementById('freqYVal'),
+            scale: document.getElementById('scaleVal'),
+            waveAmp: document.getElementById('waveAmpVal'),
+            speed: document.getElementById('speedVal'),
+            lineWidth: document.getElementById('lineWidthVal'),
+            trail: document.getElementById('trailVal'),
+            colorHex: document.getElementById('colorHex')
+        };
+
+        const formulaEls = {
+            sides: document.getElementById('f_sides'),
+            angle: document.getElementById('f_angle'),
+            density: document.getElementById('f_density'),
+            fx: document.getElementById('f_fx'),
+            wave: document.getElementById('f_wave'),
+            speed: document.getElementById('f_speed'),
+            scale: document.getElementById('f_scale'),
+            tooltip: document.getElementById('mathTooltip')
+        };
+
+        const hud = {
+            engine: document.getElementById('hudEngine'),
+            vertices: document.getElementById('hudVertices'),
+            phase: document.getElementById('hudPhase'),
+            zoom: document.getElementById('hudZoom'),
+            fps: document.getElementById('fpsCounter'),
+            audioBox: document.getElementById('hudAudioBox'),
+            audio: document.getElementById('hudAudio')
+        };
+
+        // --- وضعیت کلی برنامه (Glow به صورت پیش‌فرض خاموش است) ---
+        let state = {
+            mode: 'polygon', // 'polygon' | 'lissajous' | 'hypotrochoid' | 'rose' | 'superformula'
+            sides: 6,
+            angle: 2.5,
+            density: 85,
+            freqX: 3,
+            freqY: 4,
+            scale: 0.972,
+            waveAmp: 0.12,
+            speed: 1.5,
+            lineWidth: 1.6,
+            trail: 0,
+            color: '#00f3ff',
+            rainbow: false,
+            glow: false,
+            dashed: false,
+            nodes: false,
+            time: 0,
+            isPaused: false,
+            zoom: 1,
+            panX: 0,
+            panY: 0
+        };
+
+        // متغیرهای جابجایی (Pan) با ماوس
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+
+        // متغیرهای میکروفون (Audio Reactive)
+        let audioCtx = null;
+        let analyser = null;
+        let dataArray = null;
+        let audioActive = false;
+        let audioBoost = 0;
+
+        // متغیرهای محاسبه FPS
+        let lastFrameTime = performance.now();
+        let frameCount = 0;
+
+        // --- تنظیم ابعاد واکنش‌گرا برای Canvas ---
+        function resizeCanvas() {
+            const rect = container.getBoundingClientRect();
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.scale(dpr, dpr);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // --- تغییر موتور شکل هندسی (۵ الگوریتم کاملاً مجزا) ---
+        const modeTitles = {
+            polygon: 'تودرتوی چرخان',
+            lissajous: 'شبکه موج لیساژو',
+            hypotrochoid: 'اسپیروگراف چرخ‌دنده‌ای',
+            rose: 'گل قطبی (Rhodonea)',
+            superformula: 'سوپرفرمول ژیلیس'
+        };
+
+        function setEngineMode(mode) {
+            state.mode = mode;
+            document.querySelectorAll('.mode-tab').forEach(btn => btn.classList.remove('active'));
+            const activeTab = document.getElementById(`tab_${mode}`);
+            if (activeTab) activeTab.classList.add('active');
+
+            document.getElementById('currentModeBadge').textContent = modeTitles[mode];
+            hud.engine.textContent = mode.toUpperCase();
+
+            // پاکسازی کامل بوم هنگام تعویض شکل
+            ctx.fillStyle = '#07090e';
+            ctx.fillRect(0, 0, container.clientWidth, container.clientHeight);
+            updateStateFromUI();
+        }
+
+        // --- همگام‌سازی UI و State ---
+        function updateStateFromUI() {
+            state.sides = parseInt(inputs.sides.value);
+            state.angle = parseFloat(inputs.angle.value);
+            state.density = parseInt(inputs.density.value);
+            state.freqX = parseInt(inputs.freqX.value);
+            state.freqY = parseInt(inputs.freqY.value);
+            state.scale = parseFloat(inputs.scale.value);
+            state.waveAmp = parseFloat(inputs.waveAmp.value);
+            state.speed = parseFloat(inputs.speed.value);
+            state.lineWidth = parseFloat(inputs.lineWidth.value);
+            state.trail = parseFloat(inputs.trail.value);
+            state.color = inputs.color.value;
+            state.rainbow = inputs.rainbow.checked;
+            state.glow = inputs.glow.checked;
+            state.dashed = inputs.dashed.checked;
+            state.nodes = inputs.nodes.checked;
+
+            // آپدیت لیبل‌ها
+            labels.sides.textContent = state.sides;
+            labels.angle.textContent = state.angle.toFixed(1) + '°';
+            labels.density.textContent = state.density;
+            labels.freqX.textContent = state.freqX;
+            labels.freqY.textContent = state.freqY;
+            labels.scale.textContent = state.scale.toFixed(3);
+            labels.waveAmp.textContent = state.waveAmp.toFixed(2);
+            labels.speed.textContent = state.speed.toFixed(1) + 'x';
+            labels.lineWidth.textContent = state.lineWidth.toFixed(1);
+            labels.trail.textContent = state.trail === 0 ? '0% (بدون رد)' : Math.round(state.trail * 100) + '%';
+            labels.colorHex.textContent = state.color;
+
+            // آپدیت فرمول زنده
+            formulaEls.sides.textContent = `2π/${state.sides}`;
+            formulaEls.angle.textContent = `${state.angle.toFixed(1)}°`;
+            formulaEls.density.textContent = state.density;
+            formulaEls.fx.textContent = state.freqX;
+            formulaEls.wave.textContent = state.waveAmp.toFixed(2);
+            formulaEls.speed.textContent = state.speed.toFixed(1);
+            formulaEls.scale.textContent = state.scale.toFixed(3);
+        }
+
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', updateStateFromUI);
+        });
+
+        // --- هاور روی اعداد معادله ---
+        document.querySelectorAll('.math-var').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                formulaEls.tooltip.textContent = el.getAttribute('data-tip');
+                formulaEls.tooltip.classList.add('text-neon-pink');
+            });
+            el.addEventListener('mouseleave', () => {
+                formulaEls.tooltip.textContent = '💡 نشانگر ماوس را روی اعداد رنگی معادله ببرید.';
+                formulaEls.tooltip.classList.remove('text-neon-pink');
+            });
+        });
+
+        // --- تعامل ماوس با بوم (Zoom & Pan) ---
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomFactor = e.deltaY < 0 ? 1.08 : 0.92;
+            state.zoom = Math.min(Math.max(state.zoom * zoomFactor, 0.25), 5);
+            hud.zoom.textContent = `${Math.round(state.zoom * 100)}%`;
+        }, { passive: false });
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            dragStartX = e.clientX - state.panX;
+            dragStartY = e.clientY - state.panY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            state.panX = e.clientX - dragStartX;
+            state.panY = e.clientY - dragStartY;
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        canvas.addEventListener('dblclick', () => {
+            state.zoom = 1;
+            state.panX = 0;
+            state.panY = 0;
+            hud.zoom.textContent = '100%';
+        });
+
+        // میانبر کیبورد (Space برای استپ)
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && document.activeElement.tagName !== 'INPUT') {
+                e.preventDefault();
+                togglePause();
+            }
+        });
+
+        // --- قابلیت واکنش به میکروفون (Audio Reactive) ---
+        async function toggleAudio() {
+            const btn = document.getElementById('audioBtn');
+            if (audioActive) {
+                audioActive = false;
+                audioBoost = 0;
+                btn.classList.remove('border-neon-green', 'text-neon-green');
+                hud.audioBox.classList.add('hidden');
+                return;
+            }
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioCtx.createMediaStreamSource(stream);
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 128;
+                source.connect(analyser);
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                audioActive = true;
+                btn.classList.add('border-neon-green', 'text-neon-green');
+                hud.audioBox.classList.remove('hidden');
+            } catch (err) {
+                alert('دسترسی به میکروفون امکان‌پذیر نشد.');
+            }
+        }
+
+        // --- حلقه اصلی رندرینگ ۵ موتور هندسی ---
+        function drawPattern(timestamp) {
+            frameCount++;
+            if (timestamp - lastFrameTime >= 1000) {
+                hud.fps.textContent = frameCount;
+                frameCount = 0;
+                lastFrameTime = timestamp;
+            }
+
+            // خواندن شدت صدا در صورت فعال بودن میکروفون
+            if (audioActive && analyser) {
+                analyser.getByteFrequencyData(dataArray);
+                let sum = 0;
+                for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+                audioBoost = (sum / dataArray.length) / 255; // 0 to 1
+                hud.audio.textContent = Math.round(audioBoost * 100) + '%';
+            } else {
+                audioBoost = 0;
+            }
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const cx = width / 2 + state.panX;
+            const cy = height / 2 + state.panY;
+
+            // پاکسازی بوم (با پشتیبانی از Motion Trail)
+            const clearAlpha = 1 - state.trail;
+            ctx.fillStyle = `rgba(7, 9, 14, ${clearAlpha})`;
+            ctx.fillRect(0, 0, width, height);
+
+            const baseRadius = Math.min(width, height) * 0.41 * state.zoom * (1 + audioBoost * 0.35);
+
+            // به‌روزرسانی فاز زمان
+            if (!state.isPaused) {
+                state.time += 0.008 * state.speed * (1 + audioBoost * 1.5);
+                hud.phase.textContent = (state.time % (Math.PI * 2)).toFixed(2);
+            }
+
+            ctx.save();
+            ctx.translate(cx, cy);
+
+            // تنظیم خط‌چین
+            if (state.dashed) {
+                ctx.setLineDash([6, 6]);
+            } else {
+                ctx.setLineDash([]);
+            }
+
+            // تنظیم درخشش نئونی (فقط اگر کاربر روشن کرده باشد)
+            if (state.glow) {
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = state.color;
+            } else {
+                ctx.shadowBlur = 0;
+            }
+
+            const angleStepRad = (state.angle * Math.PI) / 180;
+            const rgbBase = hexToRgbObj(state.color);
+            let totalNodes = 0;
+
+            // انتخاب موتور رسم بر اساس تب فعال
+            if (state.mode === 'polygon') {
+                // ۱. موتور چندضلعی‌های تودرتوی چرخان
+                for (let k = 0; k < state.density; k++) {
+                    const progress = k / state.density;
+                    const currentRadius = baseRadius * Math.pow(state.scale, k);
+                    const dynamicRotation = (k * angleStepRad) + state.time;
+
+                    ctx.beginPath();
+                    for (let i = 0; i <= state.sides; i++) {
+                        const theta = (i * 2 * Math.PI / state.sides) + dynamicRotation;
+                        const wave = 1 + state.waveAmp * Math.cos(state.freqX * theta - state.time * 2);
+                        const r = currentRadius * wave;
+                        const x = r * Math.cos(theta);
+                        const y = r * Math.sin(theta);
+
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+
+                        if (state.nodes && i < state.sides) {
+                            ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
+                        }
+                    }
+                    ctx.closePath();
+                    applyLayerStroke(k, progress, rgbBase);
+                    totalNodes += state.sides;
+                }
+            } 
+            else if (state.mode === 'lissajous') {
+                // ۲. موتور شبکه امواج لیساژو (غیردایره‌ای، مبتنی بر نوسانگرهای متعامد X و Y)
+                const steps = 220;
+                for (let k = 0; k < state.density; k++) {
+                    const progress = k / state.density;
+                    const layerScale = Math.pow(state.scale, k * 0.5);
+                    const phaseShift = k * angleStepRad + state.time;
+
+                    ctx.beginPath();
+                    for (let i = 0; i <= steps; i++) {
+                        const t = (i / steps) * Math.PI * 2;
+                        const x = baseRadius * layerScale * Math.sin(state.freqX * t + phaseShift);
+                        const y = baseRadius * layerScale * Math.sin(state.freqY * t + state.waveAmp * Math.PI * 2 * Math.cos(t * state.sides));
+
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+
+                        if (state.nodes && i % 10 === 0) {
+                            ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
+                        }
+                    }
+                    applyLayerStroke(k, progress, rgbBase);
+                    totalNodes += steps;
+                }
+            }
+            else if (state.mode === 'hypotrochoid') {
+                // ۳. موتور اسپیروگراف چرخ‌دنده‌ای (Hypotrochoid & Epitrochoid)
+                const R = state.sides;
+                const r = state.freqX;
+                const d = state.freqY * (1 + state.waveAmp * 2);
+                const maxDiff = Math.max(1, Math.abs(R - r) + d);
+                const steps = 260;
+
+                for (let k = 0; k < state.density; k++) {
+                    const progress = k / state.density;
+                    const radiusScale = (baseRadius / maxDiff) * Math.pow(state.scale, k * 0.65);
+                    const rot = k * angleStepRad + state.time;
+
+                    ctx.save();
+                    ctx.rotate(rot);
+                    ctx.beginPath();
+                    for (let i = 0; i <= steps; i++) {
+                        const t = (i / steps) * Math.PI * 2 * r;
+                        const x = radiusScale * ((R - r) * Math.cos(t) + d * Math.cos(((R - r) / r) * t));
+                        const y = radiusScale * ((R - r) * Math.sin(t) - d * Math.sin(((R - r) / r) * t));
+
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    applyLayerStroke(k, progress, rgbBase);
+                    ctx.restore();
+                    totalNodes += steps;
+                }
+            }
+            else if (state.mode === 'rose') {
+                // ۴. موتور گل قطبی (Rhodonea Curve: r = cos(k * theta))
+                const kRatio = state.sides / Math.max(1, state.freqX);
+                const steps = 240;
+                const maxTheta = Math.PI * 2 * state.freqX;
+
+                for (let k = 0; k < state.density; k++) {
+                    const progress = k / state.density;
+                    const layerRadius = baseRadius * Math.pow(state.scale, k * 0.65);
+                    const rot = k * angleStepRad + state.time;
+
+                    ctx.beginPath();
+                    for (let i = 0; i <= steps; i++) {
+                        const theta = (i / steps) * maxTheta;
+                        const r = layerRadius * (Math.cos(kRatio * theta) + state.waveAmp * Math.sin(state.freqY * theta + state.time));
+                        const x = r * Math.cos(theta + rot);
+                        const y = r * Math.sin(theta + rot);
+
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+                    applyLayerStroke(k, progress, rgbBase);
+                    totalNodes += steps;
+                }
+            }
+            else if (state.mode === 'superformula') {
+                // ۵. موتور سوپرفرمول ژیلیس (Gielis Superformula برای اشکال ارگانیک و ستاره‌ای پیشرفته)
+                const m = state.sides;
+                const n1 = Math.max(0.4, state.freqX * 0.6);
+                const n2 = Math.max(0.4, state.freqY * 0.6 + state.waveAmp * 4);
+                const n3 = n2;
+                const steps = 180;
+
+                for (let k = 0; k < state.density; k++) {
+                    const progress = k / state.density;
+                    const layerRadius = baseRadius * Math.pow(state.scale, k * 0.75);
+                    const rot = k * angleStepRad + state.time;
+
+                    ctx.beginPath();
+                    for (let i = 0; i <= steps; i++) {
+                        const phi = (i / steps) * Math.PI * 2;
+                        const part1 = Math.pow(Math.abs(Math.cos((m * phi) / 4)), n2);
+                        const part2 = Math.pow(Math.abs(Math.sin((m * phi) / 4)), n3);
+                        const rSuper = Math.pow(part1 + part2, -1 / n1);
+                        const r = layerRadius * Math.min(rSuper, 2.5);
+
+                        const x = r * Math.cos(phi + rot);
+                        const y = r * Math.sin(phi + rot);
+
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+                    applyLayerStroke(k, progress, rgbBase);
+                    totalNodes += steps;
+                }
+            }
+
+            hud.vertices.textContent = totalNodes.toLocaleString();
+            ctx.restore();
+            requestAnimationFrame(drawPattern);
+        }
+
+        // --- اعمال رنگ و ضخامت هر لایه ---
+        function applyLayerStroke(k, progress, rgbBase) {
+            const alpha = Math.max(0.12, 1 - progress * 0.85);
+            if (state.rainbow) {
+                const hue = (k * 4 + state.time * 40) % 360;
+                const colorStr = `hsla(${hue}, 95%, 60%, ${alpha})`;
+                ctx.strokeStyle = colorStr;
+                ctx.fillStyle = colorStr;
+                if (state.glow) ctx.shadowColor = `hsl(${hue}, 95%, 60%)`;
+            } else {
+                const colorStr = `rgba(${rgbBase.r}, ${rgbBase.g}, ${rgbBase.b}, ${alpha})`;
+                ctx.strokeStyle = colorStr;
+                ctx.fillStyle = colorStr;
+            }
+            ctx.lineWidth = Math.max(0.3, state.lineWidth * (1 - progress * 0.55));
+            ctx.stroke();
+        }
+
+        function hexToRgbObj(hex) {
+            return {
+                r: parseInt(hex.slice(1, 3), 16),
+                g: parseInt(hex.slice(3, 5), 16),
+                b: parseInt(hex.slice(5, 7), 16)
+            };
+        }
+
+        // --- پریست‌های پیش‌فرض ---
+        function applyBuiltInPreset(name) {
+            const presets = {
+                star: { mode: 'polygon', sides: 5, angle: 3.8, density: 100, freqX: 5, freqY: 3, scale: 0.968, waveAmp: 0.18, speed: 1.4, lineWidth: 1.6, color: '#00f3ff', rainbow: false },
+                lissajous_net: { mode: 'lissajous', sides: 4, angle: 1.2, density: 45, freqX: 3, freqY: 4, scale: 0.985, waveAmp: 0.14, speed: 1.2, lineWidth: 1.4, color: '#ff007f', rainbow: true },
+                gear_flower: { mode: 'hypotrochoid', sides: 11, angle: 2.0, density: 50, freqX: 4, freqY: 5, scale: 0.975, waveAmp: 0.20, speed: 1.0, lineWidth: 1.5, color: '#b026ff', rainbow: false },
+                bio_cell: { mode: 'superformula', sides: 7, angle: 3.2, density: 75, freqX: 2, freqY: 6, scale: 0.972, waveAmp: 0.30, speed: 1.5, lineWidth: 1.8, color: '#00ff66', rainbow: false }
+            };
+            const p = presets[name];
+            if (!p) return;
+            loadConfigToUI(p);
+        }
+
+        function loadConfigToUI(p) {
+            if (p.mode) setEngineMode(p.mode);
+            inputs.sides.value = p.sides;
+            inputs.angle.value = p.angle;
+            inputs.density.value = p.density;
+            inputs.freqX.value = p.freqX ?? 3;
+            inputs.freqY.value = p.freqY ?? 4;
+            inputs.scale.value = p.scale;
+            inputs.waveAmp.value = p.waveAmp ?? 0.12;
+            inputs.speed.value = p.speed;
+            inputs.lineWidth.value = p.lineWidth ?? 1.6;
+            inputs.trail.value = p.trail ?? 0;
+            inputs.color.value = p.color;
+            inputs.rainbow.checked = !!p.rainbow;
+            inputs.glow.checked = !!p.glow;
+            inputs.dashed.checked = !!p.dashed;
+            inputs.nodes.checked = !!p.nodes;
+            updateStateFromUI();
+        }
+
+        // --- سیستم ذخیره پریست‌های شخصی کاربر (LocalStorage) ---
+        const STORAGE_KEY = 'geo_lab_user_presets_v2';
+
+        function getSavedPresets() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            } catch {
+                return [];
+            }
+        }
+
+        function saveUserPreset() {
+            const nameInput = document.getElementById('customPresetName');
+            const name = nameInput.value.trim() || `الگوی من ${getSavedPresets().length + 1}`;
+            const currentConfig = {
+                id: Date.now(),
+                name,
+                mode: state.mode,
+                sides: state.sides,
+                angle: state.angle,
+                density: state.density,
+                freqX: state.freqX,
+                freqY: state.freqY,
+                scale: state.scale,
+                waveAmp: state.waveAmp,
+                speed: state.speed,
+                lineWidth: state.lineWidth,
+                trail: state.trail,
+                color: state.color,
+                rainbow: state.rainbow,
+                glow: state.glow,
+                dashed: state.dashed,
+                nodes: state.nodes
+            };
+
+            const list = getSavedPresets();
+            list.push(currentConfig);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+            nameInput.value = '';
+            renderUserPresets();
+        }
+
+        function deleteUserPreset(id, event) {
+            event.stopPropagation();
+            const list = getSavedPresets().filter(item => item.id !== id);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+            renderUserPresets();
+        }
+
+        function renderUserPresets() {
+            const containerEl = document.getElementById('userPresetsContainer');
+            const list = getSavedPresets();
+            containerEl.innerHTML = '';
+
+            list.forEach(preset => {
+                const chip = document.createElement('div');
+                chip.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neon-cyan/10 hover:bg-neon-cyan/20 border border-neon-cyan/30 text-neon-cyan text-[11px] cursor-pointer transition-all';
+                chip.onclick = () => loadConfigToUI(preset);
+                chip.innerHTML = `
+                    <span class="w-2 h-2 rounded-full" style="background:${preset.color}"></span>
+                    <span class="font-medium">${preset.name}</span>
+                    <button onclick="deleteUserPreset(${preset.id}, event)" class="text-slate-400 hover:text-red-400 mr-1 font-bold" title="حذف">×</button>
+                `;
+                containerEl.appendChild(chip);
+            });
+        }
+
+        // --- تولید پارامترهای تصادفی ---
+        function randomizeParams() {
+            inputs.sides.value = Math.floor(Math.random() * 14) + 3;
+            inputs.angle.value = (Math.random() * 25 + 0.5).toFixed(1);
+            inputs.density.value = Math.floor(Math.random() * 110) + 40;
+            inputs.freqX.value = Math.floor(Math.random() * 9) + 1;
+            inputs.freqY.value = Math.floor(Math.random() * 9) + 1;
+            inputs.scale.value = (Math.random() * (0.985 - 0.955) + 0.955).toFixed(3);
+            inputs.waveAmp.value = (Math.random() * 0.35).toFixed(2);
+            
+            const neonColors = ['#00f3ff', '#ff007f', '#b026ff', '#00ff66', '#ffbe0b', '#3a86ff'];
+            inputs.color.value = neonColors[Math.floor(Math.random() * neonColors.length)];
+            updateStateFromUI();
+        }
+
+        // --- بازنشانی تنظیمات ---
+        function resetDefaults() {
+            loadConfigToUI({
+                mode: 'polygon',
+                sides: 6,
+                angle: 2.5,
+                density: 85,
+                freqX: 3,
+                freqY: 4,
+                scale: 0.972,
+                waveAmp: 0.12,
+                speed: 1.5,
+                lineWidth: 1.6,
+                trail: 0,
+                color: '#00f3ff',
+                rainbow: false,
+                glow: false,
+                dashed: false,
+                nodes: false
+            });
+            state.zoom = 1;
+            state.panX = 0;
+            state.panY = 0;
+            hud.zoom.textContent = '100%';
+        }
+
+        function togglePause() {
+            state.isPaused = !state.isPaused;
+            const pauseBtn = document.getElementById('pauseBtn');
+            pauseBtn.classList.toggle('border-neon-pink', state.isPaused);
+            pauseBtn.classList.toggle('text-neon-pink', state.isPaused);
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(() => {});
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // --- ۱. دانلود عکس فعلی (PNG) ---
+        function downloadCanvasImage() {
+            const link = document.createElement('a');
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+            link.download = `geometric-lab-${state.mode}-${timestamp}.png`;
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+        }
+
+        // --- ۲. ضبط و دانلود ویدیوی ۵ ثانیه‌ای از چرخش الگو (WebM 60fps) ---
+        let isRecording = false;
+
+        function recordFiveSecondVideo() {
+            if (isRecording) return;
+            if (!canvas.captureStream || typeof MediaRecorder === 'undefined') {
+                alert('مرورگر شما از قابلیت ضبط مستقیم ویدیو از بوم پشتیبانی نمی‌کند.');
+                return;
+            }
+
+            // اگر انیمیشن متوقف بود، برای ضبط به حرکت درآید
+            if (state.isPaused) togglePause();
+
+            isRecording = true;
+            const btn = document.getElementById('recordVideoBtn');
+            const btnText = document.getElementById('recordBtnText');
+            const recInd = document.getElementById('recIndicator');
+            const recTimer = document.getElementById('recTimer');
+
+            btn.classList.add('opacity-60', 'cursor-not-allowed');
+            recInd.classList.remove('hidden');
+            recInd.classList.add('flex');
+
+            const stream = canvas.captureStream(60);
+            let mimeType = 'video/webm;codecs=vp9';
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                mimeType = 'video/webm';
+            }
+
+            const recorder = new MediaRecorder(stream, {
+                mimeType,
+                videoBitsPerSecond: 8000000 // کیفیت بالا (8 Mbps)
+            });
+
+            const chunks = [];
+            recorder.ondataavailable = (e) => {
+                if (e.data && e.data.size > 0) chunks.push(e.data);
+            };
+
+            recorder.onstop = () => {
+                const blob = new Blob(chunks, { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+                a.href = url;
+                a.download = `geometric-rotation-5s-${state.mode}-${timestamp}.webm`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                isRecording = false;
+                btn.classList.remove('opacity-60', 'cursor-not-allowed');
+                btnText.textContent = 'ضبط ۵ ثانیه چرخش';
+                recInd.classList.add('hidden');
+                recInd.classList.remove('flex');
+            };
+
+            recorder.start();
+
+            let remaining = 5.0;
+            btnText.textContent = `در حال ضبط... (5.0s)`;
+            const timerInterval = setInterval(() => {
+                remaining = Math.max(0, remaining - 0.1);
+                btnText.textContent = `در حال ضبط... (${remaining.toFixed(1)}s)`;
+                recTimer.textContent = `REC ${remaining.toFixed(1)}s`;
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                }
+            }, 100);
+
+            setTimeout(() => {
+                if (recorder.state === 'recording') {
+                    recorder.stop();
+                }
+            }, 5000);
+        }
+
+        // راه‌اندازی اولیه
+        renderUserPresets();
+        updateStateFromUI();
+        requestAnimationFrame(drawPattern);
+    </script>
+</body>
+</html>
